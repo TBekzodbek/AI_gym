@@ -1,11 +1,12 @@
-const Groq = require('groq-sdk');
+const { HfInference } = require('@huggingface/inference');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
+const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+
+// Use a reliable model from Hugging Face
+const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
 
 const SYSTEM_PROMPT = `
 You are AI FITCOACH PRO, a highly intelligent, professional, and motivational virtual gym trainer and fitness assistant.
@@ -25,14 +26,20 @@ const AIService = {
      * Generate response for general chat
      */
     async chat(userInput, userProfile) {
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT + `\nUser Context: ${JSON.stringify(userProfile || {})}` },
-                { role: 'user', content: userInput }
-            ],
-            model: 'llama-3.3-70b-versatile',
-        });
-        return completion.choices[0].message.content;
+        try {
+            const response = await hf.chatCompletion({
+                model: MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT + `\nUser Context: ${JSON.stringify(userProfile || {})}` },
+                    { role: 'user', content: userInput }
+                ],
+                max_tokens: 1000,
+            });
+            return response.choices[0].message.content;
+        } catch (error) {
+            console.error('HuggingFace Chat Error:', error);
+            throw error;
+        }
     },
 
     /**
@@ -53,14 +60,20 @@ const AIService = {
         Format as clear Telegram-friendly markdown with emojis.
         `;
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: prompt }
-            ],
-            model: 'llama-3.3-70b-versatile',
-        });
-        return completion.choices[0].message.content;
+        try {
+            const response = await hf.chatCompletion({
+                model: MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 2000,
+            });
+            return response.choices[0].message.content;
+        } catch (error) {
+            console.error('HuggingFace Workout Error:', error);
+            throw error;
+        }
     },
 
     /**
@@ -81,14 +94,20 @@ const AIService = {
         Format as clear Telegram-friendly markdown with emojis.
         `;
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: prompt }
-            ],
-            model: 'llama-3.3-70b-versatile',
-        });
-        return completion.choices[0].message.content;
+        try {
+            const response = await hf.chatCompletion({
+                model: MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 2000,
+            });
+            return response.choices[0].message.content;
+        } catch (error) {
+            console.error('HuggingFace Nutrition Error:', error);
+            throw error;
+        }
     },
 
     /**
@@ -102,14 +121,20 @@ const AIService = {
         Keep it concise and punchy.
         `;
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: prompt }
-            ],
-            model: 'llama-3.3-70b-versatile',
-        });
-        return completion.choices[0].message.content;
+        try {
+            const response = await hf.chatCompletion({
+                model: MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 500,
+            });
+            return response.choices[0].message.content;
+        } catch (error) {
+            console.error('HuggingFace Motivation Error:', error);
+            throw error;
+        }
     }
 };
 

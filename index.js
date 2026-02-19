@@ -47,9 +47,15 @@ bot.catch((err, ctx) => {
 });
 
 // Launch
-bot.launch().then(() => {
-    console.log('AI FITCOACH PRO is running...');
-});
+bot.launch()
+    .then(() => {
+        console.log('✅ AI FITCOACH PRO is running...');
+        console.log('Bot username:', bot.botInfo?.username);
+    })
+    .catch((err) => {
+        console.error('❌ Failed to launch bot:', err);
+        process.exit(1);
+    });
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
