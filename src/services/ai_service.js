@@ -3,10 +3,15 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+const hfApiKey = process.env.HUGGINGFACE_API_KEY;
+if (!hfApiKey || !hfApiKey.startsWith('hf_')) {
+    console.error('❌ Invalid or missing HUGGINGFACE_API_KEY in .env file. Must start with "hf_"');
+}
 
-// Use a reliable model from Hugging Face
-const MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1";
+const hf = new HfInference(hfApiKey);
+
+// Using a highly compatible model for the Inference API
+const MODEL = "Qwen/Qwen2.5-72B-Instruct";
 
 const SYSTEM_PROMPT = `
 You are AI FITCOACH PRO, a highly intelligent, professional, and motivational virtual gym trainer and fitness assistant.
